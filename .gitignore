@@ -1,0 +1,13 @@
+# Ignore Mac crap
+.sass-cache
+.DS_Store
+
+# Ignore generated files
+# src/sass/_icons.scss
+# src/docs/partials/icons.html
+
+# src/sass/layout/_grid.scss
+
+# Never mind them node modules
+node_modules/
+
