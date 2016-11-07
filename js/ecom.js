@@ -212,6 +212,7 @@ $(function() {
     },
     created: function() {
       console.log(this);
+      this.fetchBasket();
     }
   });
 
