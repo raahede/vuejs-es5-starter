@@ -41,8 +41,8 @@
       }
       .loader {
         position: absolute;
-        left: 20px;
-        top: 20px;
+        left: 50%;
+        top: 10px;
         font-size: 3px;
         text-indent: -9999em;
         border-top: 1.1em solid rgba(0,0,0, 0.2);
@@ -82,16 +82,23 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
+    <script type="text/x-template" id="nz-errors">
+      <div class="errors">
+        <div v-for="item in failedRequests" class="alert alert-warning" role="alert">
+          <button @click="remove(item)" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <strong>Warning!</strong> {{item.statusText}}
+        </div>
+      </div>
+    </script>
+
     <script type="text/x-template" id="nz-mini-basket">
       <div class="basket">
-        <h1>Basket</h1>
-        <p>{{message}}</p>
-        <div class="dropdown">
+        <div class="dropdown navbar-btn">
           <div class="btn-group">
-            <button :disabled="basket.totalQuantity < 1" type="button" class="btn" :class="{ 'btn-success': basket.totalQuantity > 0 }">
-              Kurv {{basket.totalQuantity}}
+            <button v-bind:disabled="basket.totalQuantity < 1" type="button" class="btn" v-bind:class="{ 'btn-success': basket.totalQuantity > 0 }">
+              Kurv <span v-if="basket.totalQuantity > 1">{{basket.totalQuantity}}</span>
             </button>
-            <button :disabled="basket.totalQuantity < 1" type="button" class="btn dropdown-toggle" :class="{ 'btn-success': basket.totalQuantity > 0 }" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button v-bind:disabled="basket.totalQuantity < 1" type="button" class="btn dropdown-toggle" v-bind:class="{ 'btn-success': basket.totalQuantity > 0 }" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="caret"></span>
               <span class="sr-only">Toggle Dropdown</span>
             </button>
@@ -135,6 +142,33 @@
 
     <div class="container">
       <div id="app">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <a class="navbar-brand" href="#">eCommerce Foundation</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="navbar-right navbar-collapse">
+              <!-- <button type="button" class="btn btn-default navbar-btn">Sign in</button> -->
+              <div is="nz-mini-basket">
+                <div class="btn-group navbar-btn">
+                  <button type="button" class="btn" disabled>
+                    Kurv
+                  </button>
+                  <button class="btn dropdown-toggle" disabled data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                </div>
+              </div>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
+
+        <div is="nz-errors"></div>
+
         <div class="loader" v-cloak v-if="hasPendingRequests">Loading...</div>
         <p>Count: <span v-cloak>{{count}}</span></p>
         <p>Even/Odd: <span v-cloak>{{evenOrOdd}}</span></p>
@@ -144,10 +178,6 @@
         <button @click="fetchBasket">Fetch Basket</button>
         <button @click="getProduct">Fetch Product</button>
         <button @click="getFacets">Fetch Facets</button>
-
-        <div is="nz-mini-basket">
-          <h1>Remove me</h1>
-        </div>
 
         <div class="col-xs-12" v-cloak>
           <table class="table">
@@ -204,39 +234,19 @@
             </tr>
           </table>
         </div>
-        <div class="col-xs-12">
-          <table class="table">
-            <thead class="thead-inverse">
-              <tr>
-                <th colspan="2">Basket</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">Price</th>
-                <td v-text="basket.totalPriceFormatted">0</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <table class="table">
-            <thead class="thead-default">
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in basket.orderLines">
-                <th scope="row">{{item.quantity}}</th>
-                <td>{{item.product.name}}</td>
-                <td>{{item.product.priceFormatted}}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </div>
+
+      <div class="card-block">
+        <button class="js-vue-product btn btn-primary" disabled data-stock="5" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-15-White')">Plain 15&quot; White</button>
+        <button class="js-vue-product btn btn-primary" disabled data-stock="0" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-15-Blue')">Plain 15&quot; Blue</button>
+        <button class="js-vue-product btn btn-primary" disabled data-stock="10" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-16-White')">Plain 16&quot; White</button>
+        <button class="js-vue-product btn btn-primary" disabled data-stock="1" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-16-Blue')">Plain 16&quot; Blue</button>
+        <button class="js-vue-product btn btn-primary" disabled data-stock="1" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-17-White')">Plain 17&quot; White</button>
+        <button class="js-vue-product btn btn-primary" disabled data-stock="1" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-17-Blue')">Plain 17&quot; Blue</button>
+        <button class="js-vue-product btn btn-primary" disabled data-stock="1" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-18-White')">Plain 18&quot; White</button>
+        <button class="js-vue-product btn btn-primary" disabled data-stock="1" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-18-Blue')">Plain 18&quot; Blue</button>
+      </div>
+
     </div>
 
     <!-- JavaScript at the bottom for fast page loading -->

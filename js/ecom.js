@@ -2,7 +2,7 @@
 
 var Ecom = Ecom || {};
 
-Ecom.Store = (function($, Vue, Vuex) {
+Ecom.Store = (function($, Vuex) {
   'use strict';
 
   // root state object.
@@ -10,6 +10,7 @@ Ecom.Store = (function($, Vue, Vuex) {
   var state = {
     count: 0,
     pendingRequests: [],
+    failedRequests: [],
     basket: {
       orderLines: [],
       totalQuantity: 0
@@ -36,6 +37,13 @@ Ecom.Store = (function($, Vue, Vuex) {
     unregisterRequest: function(state, request) {
       var i = state.pendingRequests.indexOf(request);
       if(i !== -1) state.pendingRequests.splice(i, 1);
+    },
+    registerFailedRequest: function(state, request) {
+      state.failedRequests.push(request);
+    },
+    unregisterFailedRequest: function(state, request) {
+      var i = state.failedRequests.indexOf(request);
+      if(i !== -1) state.failedRequests.splice(i, 1);
     },
     setBasket: function(state, data) {
       state.basket = data;
@@ -80,6 +88,9 @@ Ecom.Store = (function($, Vue, Vuex) {
       }).done(function (data) {
         state.commit('setBasket', data);
         state.commit('unregisterRequest', request);
+      }).fail(function () {
+        state.commit('unregisterRequest', request);
+        state.commit('registerFailedRequest', request);
       });
       state.commit('registerRequest', request);
 
@@ -98,6 +109,9 @@ Ecom.Store = (function($, Vue, Vuex) {
       }).done(function (data) {
         state.commit('setProduct', data);
         state.commit('unregisterRequest', request);
+      }).fail(function () {
+        state.commit('unregisterRequest', request);
+        state.commit('registerFailedRequest', request);
       });
       state.commit('registerRequest', request);
       return request;
@@ -115,9 +129,16 @@ Ecom.Store = (function($, Vue, Vuex) {
       }).done(function (data) {
         state.commit('setFacets', data);
         state.commit('unregisterRequest', request);
+      }).fail(function () {
+        console.log(request);
+        state.commit('unregisterRequest', request);
+        state.commit('registerFailedRequest', request);
       });
       state.commit('registerRequest', request);
       return request;
+    },
+    addToBasket: function(state, props) {
+      console.log(props);
     }
   };
 
@@ -146,28 +167,30 @@ Ecom.Store = (function($, Vue, Vuex) {
     mutations: mutations
   });
 
-})(jQuery, Vue, Vuex);
+})(jQuery, Vuex);
 
 
 $(function() {
 
   Vue.component('nz-mini-basket', {
     template: '#nz-mini-basket',
-    // template: '<span>{{ getCount }}</span>',
-    // vuex: {
-    //   getters: {
-    //     getCount: Ecom.Store.getCount // call getter above
-    //   }
-    // },
-    data: function () {
-      return {
-        // getCount: Ecom.Store.getCount(),
-        message: 'Hi there'
-      }
-    },
     computed: {
       basket: function () {
         return this.$store.state.basket
+      }
+    }
+  });
+
+  Vue.component('nz-errors', {
+    template: '#nz-errors',
+    computed: {
+      failedRequests: function () {
+        return this.$store.state.failedRequests
+      }
+    },
+    methods: {
+      remove: function (request) {
+        this.$store.commit('unregisterFailedRequest', request);
       }
     }
   });
@@ -212,9 +235,33 @@ $(function() {
     },
     created: function() {
       console.log(this);
-      this.fetchBasket();
+      // this.fetchBasket();
     }
   });
 
-  console.log(Ecom.Store.state.count);
+  $('.js-vue-product').each(function() {
+    var $product = $(this);
+
+    new Vue({
+      el: $product[0], // using jquery instance
+      store: Ecom.Store,
+      data: {
+        stock: 0
+      },
+      created: function () {
+        this.$data.stock = $product.data('stock');
+      },
+      methods: {
+        addToBasket: function(productId, variantId) {
+          this.$data.stock--;
+          // dispatch with a payload
+          this.$store.dispatch('addToBasket', {
+            productId: productId,
+            variantId: variantId,
+            quantity: 1
+          })
+        }
+      }
+    });
+  });
 });
