@@ -48,14 +48,14 @@ gulp.task('scripts:vendor', function() {
 
 // Compile javascripts for debug
 gulp.task('scripts:ecom:debug', function() {
-  return gulp.src(PATHS)
+  return gulp.src(ECOM_PATHS)
     .pipe($.plumber())
     .pipe($.sourcemaps.init())
     .pipe($.jshint())
     .pipe($.jshint.reporter('jshint-stylish'))
     .pipe($.babel()
       .on('error', onBabelError))
-    .pipe($.concat('main.js'))
+    .pipe($.concat('ecom.js'))
     .pipe($.uglify({
       outSourceMap: true,
       output: {
