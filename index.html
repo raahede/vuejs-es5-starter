@@ -30,14 +30,213 @@
 
     <!-- Avoiding the FOUC v3.0 (.no-js => .js) -->
     <script>(function(H){H.className=H.className.replace(/\bno-js\b/,'js')})(document.documentElement)</script>
+
+    <style type="text/css" media="screen">
+      [v-cloak] { display: none; }
+      .loader,
+      .loader:after {
+        border-radius: 50%;
+        width: 10em;
+        height: 10em;
+      }
+      .loader {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        font-size: 3px;
+        text-indent: -9999em;
+        border-top: 1.1em solid rgba(0,0,0, 0.2);
+        border-right: 1.1em solid rgba(0,0,0, 0.2);
+        border-bottom: 1.1em solid rgba(0,0,0, 0.2);
+        border-left: 1.1em solid #000000;
+        -webkit-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-animation: load8 1.1s infinite linear;
+        animation: load8 1.1s infinite linear;
+      }
+      @-webkit-keyframes load8 {
+        0% {
+          -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes load8 {
+        0% {
+          -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+    </style>
   </head>
   <body>
     <!--[if lte IE 8]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
+    <script type="text/x-template" id="nz-mini-basket">
+      <div class="basket">
+        <h1>Basket</h1>
+        <p>{{message}}</p>
+        <div class="dropdown">
+          <div class="btn-group">
+            <button :disabled="basket.totalQuantity < 1" type="button" class="btn" :class="{ 'btn-success': basket.totalQuantity > 0 }">
+              Kurv {{basket.totalQuantity}}
+            </button>
+            <button :disabled="basket.totalQuantity < 1" type="button" class="btn dropdown-toggle" :class="{ 'btn-success': basket.totalQuantity > 0 }" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenu1">
+              <table style="width: 500px;" class="table">
+                <thead class="thead-inverse">
+                  <tr>
+                    <th colspan="2">Basket</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Price</th>
+                    <td v-text="basket.totalPriceFormatted">0</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table class="table">
+                <thead class="thead-default">
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in basket.orderLines">
+                    <th scope="row">{{item.quantity}}</th>
+                    <td>{{item.product.name}}</td>
+                    <td>{{item.product.priceFormatted}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </script>
+
     <div class="container">
-    <div id="app"></div>
+      <div id="app">
+        <div class="loader" v-cloak v-if="hasPendingRequests">Loading...</div>
+        <p>Count: <span v-cloak>{{count}}</span></p>
+        <p>Even/Odd: <span v-cloak>{{evenOrOdd}}</span></p>
+        <p>hasPendingRequests: <span v-cloak>{{hasPendingRequests}}</span></p>
+        <button @click="increment">+</button>
+        <button @click="decrement">-</button>
+        <button @click="fetchBasket">Fetch Basket</button>
+        <button @click="getProduct">Fetch Product</button>
+        <button @click="getFacets">Fetch Facets</button>
+
+        <div is="nz-mini-basket">
+          <h1>Remove me</h1>
+        </div>
+
+        <div class="col-xs-12" v-cloak>
+          <table class="table">
+            <tr>
+              <td>variantId</td><td>{{product.variantId}}</td>
+            </tr>
+            <tr>
+              <td>priceFormatted</td><td>{{product.priceFormatted}}</td>
+            </tr>
+            <tr>
+              <td>parent</td><td>{{product.parent}}</td>
+            </tr>
+            <tr>
+              <td>price</td><td>{{product.price}}</td>
+            </tr>
+            <tr>
+              <td>isVariant</td><td>{{product.isVariant}}</td>
+            </tr>
+            <tr>
+              <td>id</td><td>{{product.id}}</td>
+            </tr>
+            <tr>
+              <td>name</td><td>{{product.name}}</td>
+            </tr>
+            <tr>
+              <td>displayName</td><td>{{product.displayName}}</td>
+            </tr>
+            <tr>
+              <td>number</td><td>{{product.number}}</td>
+            </tr>
+            <tr>
+              <td>longDescription</td><td>{{product.longDescription}}</td>
+            </tr>
+            <tr>
+              <td>image</td><td>{{product.image}}</td>
+            </tr>
+            <tr>
+              <td>properties</td><td>{{product.properties}}</td>
+            </tr>
+            <tr>
+              <td>shortDescription</td><td>{{product.shortDescription}}</td>
+            </tr>
+            <tr>
+              <td>stock</td><td>{{product.stock}}</td>
+            </tr>
+            <tr>
+              <td>thumbnail</td><td>{{product.thumbnail}}</td>
+            </tr>
+            <tr>
+              <td>variantName</td><td>{{product.variantName}}</td>
+            </tr>
+            <tr>
+              <td>variantNumber</td><td>{{product.variantNumber}}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-xs-12">
+          <table class="table">
+            <thead class="thead-inverse">
+              <tr>
+                <th colspan="2">Basket</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Price</th>
+                <td v-text="basket.totalPriceFormatted">0</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table">
+            <thead class="thead-default">
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in basket.orderLines">
+                <th scope="row">{{item.quantity}}</th>
+                <td>{{item.product.name}}</td>
+                <td>{{item.product.priceFormatted}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- JavaScript at the bottom for fast page loading -->
