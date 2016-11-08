@@ -1,5 +1,3 @@
-'use strict';
-
 var Ecom = Ecom || {};
 
 Ecom.Store = (function($, Vuex) {
@@ -78,9 +76,9 @@ Ecom.Store = (function($, Vuex) {
         }, 1000);
       });
     },
-    fetchBasket: function(state) {
-      // var request = $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getbasket',
-      var request = $.ajax('basket.json',
+    getBasket: function(state) {
+      var request = $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getbasket',
+      // var request = $.ajax('basket.json',
       {
         cache: false,
         dataType: 'json',
@@ -116,16 +114,16 @@ Ecom.Store = (function($, Vuex) {
       state.commit('registerRequest', request);
       return request;
     },
-    getFacets: function(state) {
+    getFacets: function(state, props) {
       var request = $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getfacets',
       {
         cache: false,
         data: {
-          groupId: '70',
-          url: 'http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/demo-catalog/tops/formal/blue-kittens-mood-slim-fit-signature-shirt/c-24/c-70'
+          groupId: props.groupId,
+          url: props.url
         },
         dataType: 'json',
-        method: 'GET'
+        method: 'POST'
       }).done(function (data) {
         state.commit('setFacets', data);
         state.commit('unregisterRequest', request);
@@ -139,6 +137,22 @@ Ecom.Store = (function($, Vuex) {
     },
     addToBasket: function(state, props) {
       console.log(props);
+      $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/addtobasket',
+      {
+        cache: false,
+        data: JSON.stringify({
+          'id': props.productId,
+          'variantId': props.variantId,
+          'quantity': props.quantity
+        }),
+        dataType: 'json',
+        contentType: 'application/json',
+        method: 'POST'
+      })
+      .done(function (data) {
+        console.log('Basket Fetched', data);
+        state.dispatch('getBasket');
+      });
     }
   };
 
@@ -176,7 +190,94 @@ $(function() {
     template: '#nz-mini-basket',
     computed: {
       basket: function () {
-        return this.$store.state.basket
+        return this.$store.state.basket;
+      }
+    },
+    created: function() {
+      this.$store.dispatch('getBasket');
+    }
+  });
+
+  Vue.component('nz-filter', {
+    template: '#nz-filter',
+    props: ['groupId'],
+    computed: {
+      facets: function () {
+        return this.$store.state.facets;
+      }
+    },
+    created: function() {
+      this.$store.dispatch('getFacets',
+      {
+        groupId: this.groupId,
+        url: 'http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/demo-catalog/tops/formal/c-24/c-70?CollarSize=15|16'//window.location.href
+      });
+    },
+    data: function () {
+      return {
+        checkedFacets: []
+      };
+    },
+  });
+
+  Vue.component('nz-filter-dropdown', {
+    template: '#nz-filter-dropdown',
+    props: ['facet', 'checkedFacets'],
+    // computed: {
+    //   facets: function () {
+    //     return this.$store.state.facets;
+    //   }
+    // },
+    created: function() {
+      // var key = this.facet.displayName.toString();
+      // var value = this.checkedValues;
+      // this.checkedFacets[ key ] = value;
+      this.checkedValues = $.grep(this.facet.options, function( n, i ) {
+        return ( n.selected );
+      });
+
+      this.updateCheckedFacets();
+      // var obj = { this.facet.displayName: this.checkedValues });
+      // this.checkedFacets[this.facet.displayName] = this.checkedValues;
+    },
+    data: function () {
+      return {
+        checkedValues: []
+      };
+    },
+    methods: {
+      checkboxChange: function(option) {
+        console.log(option.selected);
+        if(option.selected) {
+          this.checkedValues.push(option);
+        } else {
+          var i = this.checkedValues.indexOf(option);
+          if(i !== -1) this.checkedValues.splice(i, 1);
+        }
+        this.updateCheckedFacets();
+        this.createUrl();
+      },
+      updateCheckedFacets: function() {
+        var key = this.facet.displayName;
+        var value = this.checkedValues;
+        this.checkedFacets[key] = value;
+        var _this = this;
+
+        Object.keys(this.checkedFacets).forEach(function(key, index) {
+          console.log(key, index);
+        });
+      },
+      createUrl: function() {
+        var _this;
+        var url = '';
+        // Object.keys(_this.checkedFacets).forEach(function(key, index) {
+        //   var prefix = index === 0 ? '?' : '&';
+        //   url += prefix;
+        //   for (var i = 0; i < _this.checkedFacets[key]; i++) {
+        //     url += _this.checkedFacets[key][i] + '|';
+        //   }
+        // });
+        console.log('url');
       }
     }
   });
@@ -185,7 +286,7 @@ $(function() {
     template: '#nz-errors',
     computed: {
       failedRequests: function () {
-        return this.$store.state.failedRequests
+        return this.$store.state.failedRequests;
       }
     },
     methods: {
@@ -195,24 +296,63 @@ $(function() {
     }
   });
 
+  Vue.component('nz-loader', {
+    template: '#nz-loader',
+    computed: {
+      hasPendingRequests: function () {
+        return this.$store.getters.hasPendingRequests;
+      }
+    }
+  });
+
+  Vue.component('nz-product', {
+    template: '#nz-product',
+    // data: function () {
+    //   return {
+    //     stock: 0
+    //   };
+    // },
+    props: ['initialStock', 'productName'],
+    // created: function () {
+    //   this.$data.stock = 0;
+    //   // this.$data.stock = $product.data('stock');
+    // },
+    computed: {
+      isDisabled: function() {
+        return false;
+      }
+    },
+    data: function () {
+      return {
+        stock: this.initialStock,
+        text: this.productName
+      };
+    },
+    methods: {
+      addToBasket: function(productId, variantId) {
+        // this.$data.stock--;
+        // dispatch with a payload
+        this.$store.dispatch('addToBasket', {
+          productId: productId,
+          variantId: variantId,
+          quantity: 1
+        });
+      }
+    }
+  });
+
   new Vue({
     el: '#app',
     store: Ecom.Store,
     computed: {
       count: function () {
-        return this.$store.state.count
-      },
-      basket: function () {
-        return this.$store.state.basket
+        return this.$store.state.count;
       },
       product: function () {
-        return this.$store.state.product
+        return this.$store.state.product;
       },
       evenOrOdd: function () {
-        return this.$store.getters.evenOrOdd
-      },
-      hasPendingRequests: function () {
-        return this.$store.getters.hasPendingRequests
+        return this.$store.getters.evenOrOdd;
       }
     },
     methods: {
@@ -222,8 +362,8 @@ $(function() {
       decrement: function () {
         this.$store.commit('decrement');
       },
-      fetchBasket: function () {
-        this.$store.dispatch('fetchBasket');
+      getBasket: function () {
+        this.$store.dispatch('getBasket');
       },
       getFacets: function () {
         this.$store.dispatch('getFacets');
@@ -231,37 +371,45 @@ $(function() {
       getProduct: function () {
         console.log(this.$store);
         this.$store.dispatch('getProduct');
+      },
+      addToBasket: function (productId, variantId) {
+        console.log(this.$store);
+        this.$store.dispatch('addToBasket', {
+          productId: productId,
+          variantId: variantId,
+          quantity: 1
+        });
       }
     },
     created: function() {
       console.log(this);
-      // this.fetchBasket();
+      // this.getBasket();
     }
   });
 
-  $('.js-vue-product').each(function() {
-    var $product = $(this);
+  // $('.js-vue-product').each(function() {
+  //   var $product = $(this);
 
-    new Vue({
-      el: $product[0], // using jquery instance
-      store: Ecom.Store,
-      data: {
-        stock: 0
-      },
-      created: function () {
-        this.$data.stock = $product.data('stock');
-      },
-      methods: {
-        addToBasket: function(productId, variantId) {
-          this.$data.stock--;
-          // dispatch with a payload
-          this.$store.dispatch('addToBasket', {
-            productId: productId,
-            variantId: variantId,
-            quantity: 1
-          })
-        }
-      }
-    });
-  });
+  //   new Vue({
+  //     el: $product[0], // using jquery instance
+  //     store: Ecom.Store,
+  //     data: {
+  //       stock: 0
+  //     },
+  //     created: function () {
+  //       this.$data.stock = $product.data('stock');
+  //     },
+  //     methods: {
+  //       addToBasket: function(productId, variantId) {
+  //         this.$data.stock--;
+  //         // dispatch with a payload
+  //         this.$store.dispatch('addToBasket', {
+  //           productId: productId,
+  //           variantId: variantId,
+  //           quantity: 1
+  //         })
+  //       }
+  //     }
+  //   });
+  // });
 });

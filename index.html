@@ -82,6 +82,10 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
+    <script type="text/x-template" id="nz-loader">
+      <div class="loader" v-if="hasPendingRequests">Loading...</div>
+    </script>
+
     <script type="text/x-template" id="nz-errors">
       <div class="errors">
         <div v-for="item in failedRequests" class="alert alert-warning" role="alert">
@@ -96,7 +100,7 @@
         <div class="dropdown navbar-btn">
           <div class="btn-group">
             <button v-bind:disabled="basket.totalQuantity < 1" type="button" class="btn" v-bind:class="{ 'btn-success': basket.totalQuantity > 0 }">
-              Kurv <span v-if="basket.totalQuantity > 1">{{basket.totalQuantity}}</span>
+              Kurv <span v-if="basket.totalQuantity > 1" class="badge">{{basket.totalQuantity}}</span>
             </button>
             <button v-bind:disabled="basket.totalQuantity < 1" type="button" class="btn dropdown-toggle" v-bind:class="{ 'btn-success': basket.totalQuantity > 0 }" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="caret"></span>
@@ -140,6 +144,60 @@
       </div>
     </script>
 
+    <script type="text/x-template" id="nz-filter-dropdown">
+      <div>
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          {{facet.displayName}}{{ checkedValues }}
+          <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu list-group" aria-labelledby="dropdownMenu1">
+          <div class="checkbox col-xs-12" v-for="option in facet.options">
+            <label>
+              <input
+                type="checkbox"
+                :name="option.name"
+                :value="option.value"
+                v-on:change="checkboxChange(option)"
+                v-bind:disabled="option.count < 1"
+                v-model="option.selected">
+              <span v-if="option.count > 0">{{option.name}} ({{option.count}})</span>
+              <span v-else><del>{{option.name}} ({{option.count}})</del></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/x-template" id="nz-filter">
+      <div class="filter">
+
+        <div class="btn-group" v-for="facet in facets">
+          <nz-filter-dropdown v-bind:facet="facet" v-bind:checked-facets="checkedFacets"></nz-filter-dropdown>
+          <!-- <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            {{facet.displayName}}{{ checkedFacets }}
+            <span class="caret"></span>
+          </button>
+          <div class="dropdown-menu list-group" aria-labelledby="dropdownMenu1">
+            <div class="checkbox col-xs-12" v-for="option in facet.options">
+              <label>
+                <input type="checkbox" :name="option.name" :value="option.value" v-bind:disabled="option.count < 1" v-model="checkedFacets">
+                <span v-if="option.count > 0">{{option.name}} ({{option.count}})</span>
+                <span v-else><del>{{option.name}} ({{option.count}})</del></span>
+              </label>
+            </div>
+          </div> -->
+        </div>
+        <br>
+    <!--     <div class="checkbox col-xs-12" v-for="facet in checkedFacets">
+          {{facet}}
+        </div> -->
+      </div>
+    </script>
+
+    <script type="text/x-template" id="nz-product">
+      <button class="btn btn-primary" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-15-White')">{{text}}</button>
+    </script>
+
     <div class="container">
       <div id="app">
         <nav class="navbar navbar-default">
@@ -168,16 +226,45 @@
         </nav>
 
         <div is="nz-errors"></div>
+        <div is="nz-loader"></div>
+        <div is="nz-filter" v-bind:group-id="70"></div>
 
-        <div class="loader" v-cloak v-if="hasPendingRequests">Loading...</div>
         <p>Count: <span v-cloak>{{count}}</span></p>
         <p>Even/Odd: <span v-cloak>{{evenOrOdd}}</span></p>
-        <p>hasPendingRequests: <span v-cloak>{{hasPendingRequests}}</span></p>
         <button @click="increment">+</button>
         <button @click="decrement">-</button>
-        <button @click="fetchBasket">Fetch Basket</button>
+        <button @click="getBasket">Fetch Basket</button>
         <button @click="getProduct">Fetch Product</button>
         <button @click="getFacets">Fetch Facets</button>
+        <button v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-15-White')">Add to basket (BKMSFSS-15-White)</button>
+
+
+        <div class="card-block">
+          <div is="nz-product" v-bind:initial-stock="4" product-name="Plain 15&quot; White">
+            <button class="btn btn-primary">Plain 15&quot; White</button>
+          </div>
+          <div is="nz-product" v-bind:initial-stock="0" product-name="Plain 15&quot; Blue">
+            <button class="btn btn-primary">Plain 15&quot; Blue</button>
+          </div>
+          <div is="nz-product" v-bind:initial-stock="1" product-name="Plain 16&quot; White">
+            <button class="btn btn-primary">Plain 16&quot; White</button>
+          </div>
+          <div is="nz-product" v-bind:initial-stock="2" product-name="Plain 16&quot; Blue">
+            <button class="btn btn-primary">Plain 16&quot; Blue</button>
+          </div>
+          <div is="nz-product" v-bind:initial-stock="1" product-name="Plain 17&quot; White">
+            <button class="btn btn-primary">Plain 17&quot; White</button>
+          </div>
+          <div is="nz-product" v-bind:initial-stock="1" product-name="Plain 17&quot; Blue">
+            <button class="btn btn-primary">Plain 17&quot; Blue</button>
+          </div>
+          <div is="nz-product" v-bind:initial-stock="1" product-name="Plain 18&quot; White">
+            <button class="btn btn-primary">Plain 18&quot; White</button>
+          </div>
+          <div is="nz-product" v-bind:initial-stock="1" product-name="Plain 18&quot; Blue">
+            <button class="btn btn-primary">Plain 18&quot; Blue</button>
+          </div>
+        </div>
 
         <div class="col-xs-12" v-cloak>
           <table class="table">
@@ -235,18 +322,6 @@
           </table>
         </div>
       </div>
-
-      <div class="card-block">
-        <button class="js-vue-product btn btn-primary" disabled data-stock="5" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-15-White')">Plain 15&quot; White</button>
-        <button class="js-vue-product btn btn-primary" disabled data-stock="0" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-15-Blue')">Plain 15&quot; Blue</button>
-        <button class="js-vue-product btn btn-primary" disabled data-stock="10" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-16-White')">Plain 16&quot; White</button>
-        <button class="js-vue-product btn btn-primary" disabled data-stock="1" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-16-Blue')">Plain 16&quot; Blue</button>
-        <button class="js-vue-product btn btn-primary" disabled data-stock="1" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-17-White')">Plain 17&quot; White</button>
-        <button class="js-vue-product btn btn-primary" disabled data-stock="1" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-17-Blue')">Plain 17&quot; Blue</button>
-        <button class="js-vue-product btn btn-primary" disabled data-stock="1" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-18-White')">Plain 18&quot; White</button>
-        <button class="js-vue-product btn btn-primary" disabled data-stock="1" v-bind:disabled="stock<1" v-on:click="addToBasket('BKMSFSS', 'BKMSFSS-18-Blue')">Plain 18&quot; Blue</button>
-      </div>
-
     </div>
 
     <!-- JavaScript at the bottom for fast page loading -->
