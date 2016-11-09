@@ -26,12 +26,13 @@ $(function() {
       this.$store.dispatch('getFacets',
       {
         groupId: this.groupId,
-        url: 'http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/demo-catalog/tops/formal/c-24/c-70?CollarSize=15|16'//window.location.href
+        url: window.location.href //'http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/demo-catalog/tops/formal/c-24/c-70?CollarSize=15|16'
       });
     },
     methods: {
       checkboxChange: function() {
         this.$store.dispatch('updateFilterQuery');
+        this.$store.dispatch('getProductList');
       }
     }
   });

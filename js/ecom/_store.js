@@ -94,6 +94,7 @@ Ecom.Store = (function($, Vuex) {
         }
       }
       context.commit('setFilterQuery', query);
+      window.history.pushState(null, null, query);
     },
     getBasket: function(context) {
       var request = $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getbasket',
@@ -131,6 +132,26 @@ Ecom.Store = (function($, Vuex) {
         context.commit('registerFailedRequest', request);
       });
       context.commit('registerRequest', request);
+      return request;
+    },
+    getProductList: function(context) {
+      var url = window.location.pathname + context.state.currentFilterQuery;
+      var request = $.ajax(url,
+      {
+        cache: false,
+        dataType: 'html',
+        method: 'GET'
+      }).done(function (data) {
+        // context.commit('setProduct', data);
+        context.commit('unregisterRequest', request);
+        var $html = $(data);
+        $('#nz-product-list').html($('#nz-product-list', $html).html());
+      }).fail(function () {
+        context.commit('unregisterRequest', request);
+        context.commit('registerFailedRequest', request);
+      });
+      context.commit('registerRequest', request);
+
       return request;
     },
     getFacets: function(context, props) {
