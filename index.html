@@ -144,53 +144,29 @@
       </div>
     </script>
 
-    <script type="text/x-template" id="nz-filter-dropdown">
-      <div>
-        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-          {{facet.displayName}}{{ checkedValues }}
-          <span class="caret"></span>
-        </button>
-        <div class="dropdown-menu list-group" aria-labelledby="dropdownMenu1">
-          <div class="checkbox col-xs-12" v-for="option in facet.options">
-            <label>
-              <input
-                type="checkbox"
-                :name="option.name"
-                :value="option.value"
-                v-on:change="checkboxChange(option)"
-                v-bind:disabled="option.count < 1"
-                v-model="option.selected">
-              <span v-if="option.count > 0">{{option.name}} ({{option.count}})</span>
-              <span v-else><del>{{option.name}} ({{option.count}})</del></span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </script>
-
     <script type="text/x-template" id="nz-filter">
       <div class="filter">
-
         <div class="btn-group" v-for="facet in facets">
-          <nz-filter-dropdown v-bind:facet="facet" v-bind:checked-facets="checkedFacets"></nz-filter-dropdown>
-          <!-- <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            {{facet.displayName}}{{ checkedFacets }}
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            {{facet.displayName}}
             <span class="caret"></span>
           </button>
           <div class="dropdown-menu list-group" aria-labelledby="dropdownMenu1">
             <div class="checkbox col-xs-12" v-for="option in facet.options">
               <label>
-                <input type="checkbox" :name="option.name" :value="option.value" v-bind:disabled="option.count < 1" v-model="checkedFacets">
+                <input
+                  type="checkbox"
+                  :name="option.name"
+                  :value="option.value"
+                  v-bind:disabled="option.count < 1"
+                  v-on:change="checkboxChange"
+                  v-model="option.selected">
                 <span v-if="option.count > 0">{{option.name}} ({{option.count}})</span>
                 <span v-else><del>{{option.name}} ({{option.count}})</del></span>
               </label>
             </div>
-          </div> -->
+          </div>
         </div>
-        <br>
-    <!--     <div class="checkbox col-xs-12" v-for="facet in checkedFacets">
-          {{facet}}
-        </div> -->
       </div>
     </script>
 

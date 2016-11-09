@@ -61,26 +61,41 @@ Ecom.Store = (function($, Vuex) {
   // actions are functions that causes side effects and can involve
   // asynchronous operations.
   var actions = {
-    increment: function(state) {
-      return state.commit('increment');
+    increment: function(context) {
+      return context.commit('increment');
     },
-    decrement: function(state) {
-      return state.commit('decrement');
+    decrement: function(context) {
+      return context.commit('decrement');
     },
-    incrementIfOdd: function(state) {
-      if ((state.count + 1) % 2 === 0) {
-        state.commit('increment');
+    incrementIfOdd: function(context) {
+      if ((context.count + 1) % 2 === 0) {
+        context.commit('increment');
       }
     },
-    incrementAsync: function(state) {
+    incrementAsync: function(context) {
       return new Promise(function (resolve, reject) {
         setTimeout(function () {
-          state.commit('increment');
+          context.commit('increment');
           resolve();
         }, 1000);
       });
     },
-    getBasket: function(state) {
+    updateFilterQuery: function(context) {
+      var query = '';
+      for (var i = 0; i < context.state.facets.length; i++) {
+        // Traverse facets and return the checked facets
+        var selectedOptionValues = $.map(context.state.facets[i].options, function(option) {
+          if(option.selected) return option.value;
+        });
+        // Append values to query string if any
+        if(selectedOptionValues.length) {
+          var prefix = query.length ? '&' : '?';
+          query += prefix + context.state.facets[i].name + '=' + selectedOptionValues.join('|');
+        }
+      }
+      context.commit('setFilterQuery', query);
+    },
+    getBasket: function(context) {
       var request = $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getbasket',
       // var request = $.ajax('basket.json',
       {
@@ -88,17 +103,17 @@ Ecom.Store = (function($, Vuex) {
         dataType: 'json',
         method: 'GET'
       }).done(function (data) {
-        state.commit('setBasket', data);
-        state.commit('unregisterRequest', request);
+        context.commit('setBasket', data);
+        context.commit('unregisterRequest', request);
       }).fail(function () {
-        state.commit('unregisterRequest', request);
-        state.commit('registerFailedRequest', request);
+        context.commit('unregisterRequest', request);
+        context.commit('registerFailedRequest', request);
       });
-      state.commit('registerRequest', request);
+      context.commit('registerRequest', request);
 
       return request;
     },
-    getProduct: function(state) {
+    getProduct: function(context) {
       var request = $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getproduct',
       {
         cache: false,
@@ -109,16 +124,16 @@ Ecom.Store = (function($, Vuex) {
         dataType: 'json',
         method: 'GET'
       }).done(function (data) {
-        state.commit('setProduct', data);
-        state.commit('unregisterRequest', request);
+        context.commit('setProduct', data);
+        context.commit('unregisterRequest', request);
       }).fail(function () {
-        state.commit('unregisterRequest', request);
-        state.commit('registerFailedRequest', request);
+        context.commit('unregisterRequest', request);
+        context.commit('registerFailedRequest', request);
       });
-      state.commit('registerRequest', request);
+      context.commit('registerRequest', request);
       return request;
     },
-    getFacets: function(state, props) {
+    getFacets: function(context, props) {
       var request = $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getfacets',
       {
         cache: false,
@@ -129,17 +144,18 @@ Ecom.Store = (function($, Vuex) {
         dataType: 'json',
         method: 'POST'
       }).done(function (data) {
-        state.commit('setFacets', data);
-        state.commit('unregisterRequest', request);
+        context.commit('setFacets', data);
+        context.dispatch('updateFilterQuery');
+        context.commit('unregisterRequest', request);
       }).fail(function () {
         console.log(request);
-        state.commit('unregisterRequest', request);
-        state.commit('registerFailedRequest', request);
+        context.commit('unregisterRequest', request);
+        context.commit('registerFailedRequest', request);
       });
-      state.commit('registerRequest', request);
+      context.commit('registerRequest', request);
       return request;
     },
-    addToBasket: function(state, props) {
+    addToBasket: function(context, props) {
       console.log(props);
       $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/addtobasket',
       {
@@ -155,7 +171,7 @@ Ecom.Store = (function($, Vuex) {
       })
       .done(function (data) {
         console.log('Basket Fetched', data);
-        state.dispatch('getBasket');
+        context.dispatch('getBasket');
       });
     }
   };

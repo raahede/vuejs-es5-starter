@@ -29,71 +29,9 @@ $(function() {
         url: 'http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/demo-catalog/tops/formal/c-24/c-70?CollarSize=15|16'//window.location.href
       });
     },
-    data: function () {
-      return {
-        checkedFacets: []
-      };
-    },
-  });
-
-  Vue.component('nz-filter-dropdown', {
-    template: '#nz-filter-dropdown',
-    props: ['facet', 'checkedFacets'],
-    // computed: {
-    //   facets: function () {
-    //     return this.$store.state.facets;
-    //   }
-    // },
-    created: function() {
-      // var key = this.facet.displayName.toString();
-      // var value = this.checkedValues;
-      // this.checkedFacets[ key ] = value;
-      this.checkedValues = $.grep(this.facet.options, function( n, i ) {
-        return ( n.selected );
-      });
-
-      this.updateCheckedFacets();
-      // var obj = { this.facet.displayName: this.checkedValues });
-      // this.checkedFacets[this.facet.displayName] = this.checkedValues;
-    },
-    data: function () {
-      return {
-        checkedValues: []
-      };
-    },
     methods: {
-      checkboxChange: function(option) {
-        console.log(option.selected);
-        if(option.selected) {
-          this.checkedValues.push(option);
-        } else {
-          var i = this.checkedValues.indexOf(option);
-          if(i !== -1) this.checkedValues.splice(i, 1);
-        }
-        this.updateCheckedFacets();
-        this.createUrl();
-      },
-      updateCheckedFacets: function() {
-        var key = this.facet.displayName;
-        var value = this.checkedValues;
-        this.checkedFacets[key] = value;
-        var _this = this;
-
-        Object.keys(this.checkedFacets).forEach(function(key, index) {
-          console.log(key, index);
-        });
-      },
-      createUrl: function() {
-        var _this;
-        var url = '';
-        // Object.keys(_this.checkedFacets).forEach(function(key, index) {
-        //   var prefix = index === 0 ? '?' : '&';
-        //   url += prefix;
-        //   for (var i = 0; i < _this.checkedFacets[key]; i++) {
-        //     url += _this.checkedFacets[key][i] + '|';
-        //   }
-        // });
-        console.log('url');
+      checkboxChange: function() {
+        this.$store.dispatch('updateFilterQuery');
       }
     }
   });
