@@ -15,7 +15,7 @@ var VENDOR_PATHS = [
 
 var ECOM_PATHS = [
   'js/vendor/modernizr-custom.js',
-  // 'js/ecom/_store.js',
+  'js/ecom/_store.js',
   // 'js/ecom/_basket.js',
   // 'js/ecom/_product.js',
   'js/ecom.js'
