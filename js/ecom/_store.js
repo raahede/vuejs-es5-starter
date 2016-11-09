@@ -18,6 +18,25 @@ Ecom.Store = (function($, Vuex) {
     currentFilterQuery: ''
   };
 
+  var apiEndpoint = {
+    getbasket: '/ucommerceapi/nozebra/getbasket',
+    getproduct: '/ucommerceapi/nozebra/getproduct',
+    getproductlist: window.location.pathname,
+    getfacets: '/ucommerceapi/nozebra/getfacets',
+    addtobasket: '/ucommerceapi/nozebra/addtobasket',
+  };
+
+  // Set dev mode
+  if(window.location.hostname === 'localhost') {
+    apiEndpoint = {
+      getbasket: 'http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getbasket',
+      getproduct: 'http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getproduct',
+      getproductlist: '/productlist.html',
+      getfacets: 'http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getfacets',
+      addtobasket: 'http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/addtobasket',
+    };
+  }
+
   // mutations are operations that actually mutates the state.
   // each mutation handler gets the entire state tree as the
   // first argument, followed by additional payload arguments.
@@ -94,10 +113,10 @@ Ecom.Store = (function($, Vuex) {
         }
       }
       context.commit('setFilterQuery', query);
-      window.history.pushState(null, null, query);
+      window.history.replaceState(null, null, query);
     },
     getBasket: function(context) {
-      var request = $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getbasket',
+      var request = $.ajax(apiEndpoint.getbasket,
       // var request = $.ajax('basket.json',
       {
         cache: false,
@@ -115,7 +134,7 @@ Ecom.Store = (function($, Vuex) {
       return request;
     },
     getProduct: function(context) {
-      var request = $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getproduct',
+      var request = $.ajax(apiEndpoint.getproduct,
       {
         cache: false,
         data: {
@@ -135,7 +154,7 @@ Ecom.Store = (function($, Vuex) {
       return request;
     },
     getProductList: function(context) {
-      var url = window.location.pathname + context.state.currentFilterQuery;
+      var url = apiEndpoint.getproductlist + context.state.currentFilterQuery;
       var request = $.ajax(url,
       {
         cache: false,
@@ -146,6 +165,7 @@ Ecom.Store = (function($, Vuex) {
         context.commit('unregisterRequest', request);
         var $html = $(data);
         $('#nz-product-list').html($('#nz-product-list', $html).html());
+        console.log('REPLACE', data, $('#nz-product-list', $html).html());
       }).fail(function () {
         context.commit('unregisterRequest', request);
         context.commit('registerFailedRequest', request);
@@ -155,7 +175,7 @@ Ecom.Store = (function($, Vuex) {
       return request;
     },
     getFacets: function(context, props) {
-      var request = $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getfacets',
+      var request = $.ajax(apiEndpoint.getfacets,
       {
         cache: false,
         data: {
@@ -178,7 +198,7 @@ Ecom.Store = (function($, Vuex) {
     },
     addToBasket: function(context, props) {
       console.log(props);
-      $.ajax('http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/addtobasket',
+      $.ajax(apiEndpoint.addtobasket,
       {
         cache: false,
         data: JSON.stringify({
