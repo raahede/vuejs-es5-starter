@@ -67,29 +67,26 @@ $(function() {
     //     stock: 0
     //   };
     // },
-    props: ['initialStock', 'productName'],
+    props: ['initialStock', 'productName', 'productNumber', 'variantNumber'],
     // created: function () {
     //   this.$data.stock = 0;
     //   // this.$data.stock = $product.data('stock');
     // },
-    computed: {
-      isDisabled: function() {
-        return false;
-      }
-    },
     data: function () {
       return {
         stock: this.initialStock,
-        text: this.productName
+        text: this.productName,
+        product: this.productNumber,
+        variant: this.variantNumber
       };
     },
     methods: {
-      addToBasket: function(productId, variantId) {
-        // this.$data.stock--;
+      addToBasket: function() {
+        this.$data.stock--;
         // dispatch with a payload
         this.$store.dispatch('addToBasket', {
-          productId: productId,
-          variantId: variantId,
+          productId: this.productNumber,
+          variantId: this.variantNumber,
           quantity: 1
         });
       }
