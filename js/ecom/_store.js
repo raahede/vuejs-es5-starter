@@ -165,7 +165,6 @@ Ecom.Store = (function($, Vuex) {
         context.commit('unregisterRequest', request);
         var $html = $(data);
         $('#nz-product-list').html($('#nz-product-list', $html).html());
-        console.log('REPLACE', data, $('#nz-product-list', $html).html());
       }).fail(function () {
         context.commit('unregisterRequest', request);
         context.commit('registerFailedRequest', request);
