@@ -27,7 +27,7 @@ Ecom.Store = (function($, Vuex) {
   };
 
   // Set dev mode
-  if(window.location.hostname === 'localhost') {
+  if(window.location.href.indexOf('localhost:3000') !== -1) {
     apiEndpoint = {
       getbasket: 'http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getbasket',
       getproduct: 'http://ecommercefoundation.sitecore.staging.nozebrahosting.dk/ucommerceapi/nozebra/getproduct',
