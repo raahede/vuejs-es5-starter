@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>VueJS ES5 Starter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+
+    <!-- External styles -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/github.min.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <style type="text/css" media="screen">
+      [v-cloak] { display: none; }
+    </style>
+  </head>
+  <body>
+    <script type="text/x-template" id="my-filter">
+      <div class="filter">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Movie</th>
+              <th>Year</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="character in tarantino" :key="character.rank">
+              <td>{{character.rank}}</td>
+              <td>{{character.name}}</td>
+              <td>{{character.movie}}</td>
+              <td>{{character.year}}</td>
+              <td>{{character.description}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </script>
+
+    <div class="container">
+      <div id="app">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="https://github.com/raahede/vuejs-es5-starter">VueJS ES5 Starter</a>
+            </div>
+          </div>
+        </nav>
+
+        <p>Count: <span v-cloak>{{count}}</span></p>
+        <p>Even/Odd: <span v-cloak>{{evenOrOdd}}</span></p>
+        <button v-on:click="increment">+</button>
+        <button v-on:click="decrement">-</button>
+
+        <div is="my-filter"></div>
+
+      </div>
+    </div>
+
+    <script src="/build/assets/js/vendor/vue.js"></script>
+    <script src="/build/assets/js/vendor/vuex.js"></script>
+    <script src="/build/assets/js/vendor/vue-resource.js"></script>
+    <script src="/build/assets/js/app.js"></script>
+  </body>
+</html>

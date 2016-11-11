@@ -1,0 +1,10 @@
+# Ignore Mac crap
+.sass-cache
+.DS_Store
+
+# Ignore generated files
+build/
+
+# Never mind them node modules
+node_modules/
+
