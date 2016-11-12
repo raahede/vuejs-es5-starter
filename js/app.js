@@ -30,15 +30,12 @@
       }
     },
     created: function() {
-      this.$http.get('data.json').then(function(response){
+      this.$http.get('./data.json').then(function(response){
         this.$store.commit('setTarantino', response.body);
       });
     },
     methods: {
       isFavorite: function (character) {
-        console.log(character);
-        // return this.$store.getters.isFavorite(character);
-        // return this.$store.getters.evenOrOdd;
         return this.$store.state.favorites.indexOf(character) !== -1;
       },
       addToFavorites: function(character) {
