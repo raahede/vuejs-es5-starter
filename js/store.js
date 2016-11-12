@@ -7,7 +7,8 @@ var store = (function(Vuex) {
   // each Vuex instance is just a single state tree.
   var state = {
     count: 0,
-    tarantino: {}
+    tarantino: {},
+    favorites: []
   };
 
   // mutations are operations that actually mutates the state.
@@ -24,6 +25,13 @@ var store = (function(Vuex) {
     },
     setTarantino: function(state, data) {
       state.tarantino = data;
+    },
+    addFavorite: function(state, character) {
+      state.favorites.push(character);
+    },
+    removeFavorite: function(state, character) {
+      var i = state.favorites.indexOf(character);
+      if(i !== -1) state.favorites.splice(i, 1);
     }
   };
 
@@ -40,8 +48,12 @@ var store = (function(Vuex) {
 
   // getters are functions
   var getters = {
-    evenOrOdd: function (state) {
+    evenOrOdd: function(state) {
       return state.count % 2 === 0 ? 'even' : 'odd';
+    },
+    isFavorite: function(state, character) {
+      console.log('is favorite', character);
+      return true;
     }
   };
 

@@ -22,6 +22,7 @@
         <table class="table">
           <thead>
             <tr>
+              <th></th>
               <th>#</th>
               <th>Name</th>
               <th>Movie</th>
@@ -31,6 +32,10 @@
           </thead>
           <tbody>
             <tr v-for="character in tarantino" :key="character.rank">
+              <td>
+                <button v-if="!isFavorite(character)" v-on:click="addToFavorites(character)" class="btn btn-success">+</button>
+                <button v-if="isFavorite(character)" v-on:click="removeFromFavorites(character)" class="btn btn-danger">-</button>
+              </td>
               <td>{{character.rank}}</td>
               <td>{{character.name}}</td>
               <td>{{character.movie}}</td>
@@ -52,12 +57,36 @@
           </div>
         </nav>
 
-        <p>Count: <span v-cloak>{{count}}</span></p>
-        <p>Even/Odd: <span v-cloak>{{evenOrOdd}}</span></p>
-        <button v-on:click="increment">+</button>
-        <button v-on:click="decrement">-</button>
 
-        <div is="my-filter"></div>
+        <div class="row">
+          <div class="col-md-8">
+            <div is="my-filter"></div>
+          </div>
+          <div class="col-md-4">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Favorites</h3>
+              </div>
+              <ol class="list-group">
+                <li class="list-group-item" v-for="character in favorites" :key="character.name">
+                  <span><button v-on:click="removeFromFavorites(character)" class="btn btn-danger">-</button></span>
+                  <span>{{character.name}}</span>
+                </tr>
+              </ol>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">Counter</div>
+              <div class="panel-body">
+                <p>Count: <span v-cloak>{{count}}</span></p>
+                <p>Even/Odd: <span v-cloak>{{evenOrOdd}}</span></p>
+                <button v-on:click="increment" class="btn btn-default">+</button>
+                <button v-on:click="decrement" class="btn btn-default">-</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
 
       </div>
     </div>

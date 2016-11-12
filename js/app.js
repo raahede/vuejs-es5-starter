@@ -10,6 +10,20 @@
       this.$http.get('data.json').then(function(response){
         this.$store.commit('setTarantino', response.body);
       });
+    },
+    methods: {
+      isFavorite: function (character) {
+        console.log(character);
+        // return this.$store.getters.isFavorite(character);
+        // return this.$store.getters.evenOrOdd;
+        return this.$store.state.favorites.indexOf(character) !== -1;
+      },
+      addToFavorites: function(character) {
+        this.$store.commit('addFavorite', character);
+      },
+      removeFromFavorites: function(character) {
+        this.$store.commit('removeFavorite', character);
+      }
     }
   });
 
@@ -22,6 +36,9 @@
       },
       evenOrOdd: function () {
         return this.$store.getters.evenOrOdd;
+      },
+      favorites: function () {
+        return this.$store.state.favorites;
       }
     },
     methods: {
@@ -30,6 +47,9 @@
       },
       decrement: function () {
         this.$store.commit('decrement');
+      },
+      removeFromFavorites: function(character) {
+        this.$store.commit('removeFavorite', character);
       }
     }
   });
