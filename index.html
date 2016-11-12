@@ -13,10 +13,31 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <style type="text/css" media="screen">
+      body { padding-top: 72px; }
       [v-cloak] { display: none; }
     </style>
   </head>
   <body>
+    <script type="text/x-template" id="my-item">
+      <tr class="item" v-bind:class="{'active': isFavorite}">
+        <td>
+          <button v-if="!isFavorite" v-on:click="addToFavorites" class="btn btn-sm btn-success">+</button>
+          <button v-if="isFavorite" v-on:click="removeFromFavorites" class="btn btn-sm btn-default">-</button>
+        </td>
+        <td>{{character.rank}}</td>
+        <td>{{character.name}}</td>
+        <td>{{character.movie}}</td>
+        <td>{{character.year}}</td>
+        <td>
+          <button class="btn btn-default btn-xs" v-on:click="active = !active">
+            <span v-if="active" >-</span>
+            <span v-if="!active" >...</span>
+          </button>
+          <span v-if="active">{{character.description}}</span>
+        </td>
+      </tr>
+    </script>
+
     <script type="text/x-template" id="my-filter">
       <div class="filter">
         <table class="table">
@@ -31,27 +52,20 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="character in tarantino" :key="character.rank">
-              <td>
-                <button v-if="!isFavorite(character)" v-on:click="addToFavorites(character)" class="btn btn-success">+</button>
-                <button v-if="isFavorite(character)" v-on:click="removeFromFavorites(character)" class="btn btn-danger">-</button>
-              </td>
-              <td>{{character.rank}}</td>
-              <td>{{character.name}}</td>
-              <td>{{character.movie}}</td>
-              <td>{{character.year}}</td>
-              <td>{{character.description}}</td>
-            </tr>
+            <tr v-for="character in tarantino" :key="character.rank" is="my-item" v-bind:character="character"></tr>
           </tbody>
         </table>
       </div>
     </script>
+
     <div class="container">
       <div id="app">
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <div class="navbar-header">
-              <a class="navbar-brand" href="https://github.com/raahede/vuejs-es5-starter">VueJS ES5 Starter</a>
+        <nav class="navbar-fixed-top">
+          <div class="container">
+            <div class="navbar navbar-default">
+              <div class="navbar-header">
+                <a class="navbar-brand" href="https://github.com/raahede/vuejs-es5-starter">VueJS ES5 Starter</a>
+              </div>
             </div>
           </div>
         </nav>
@@ -60,14 +74,16 @@
             <div is="my-filter"></div>
           </div>
           <div class="col-md-4">
-            <div class="panel panel-default">
+            <div class="panel panel-default" v-cloak v-if="favorites.length">
               <div class="panel-heading">
                 <h3 class="panel-title">Favorites</h3>
               </div>
               <ol class="list-group">
                 <li class="list-group-item" v-for="character in favorites" :key="character.name">
-                  <span><button v-on:click="removeFromFavorites(character)" class="btn btn-danger">-</button></span>
-                  <span>{{character.name}}</span>
+                  <h5>
+                    <button v-on:click="removeFromFavorites(character)" class="btn btn-sm btn-default">-</button>
+                    {{character.name}} <small>{{character.movie}}</small>
+                  </h5>
                 </tr>
               </ol>
             </div>

@@ -1,4 +1,27 @@
 (function() {
+  Vue.component('my-item', {
+    template: '#my-item',
+    props: ['character'],
+    data: function() {
+      return {
+        active: false
+      }
+    },
+    computed: {
+      isFavorite: function () {
+        return this.$store.state.favorites.indexOf(this.character) !== -1;
+      }
+    },
+    methods: {
+      addToFavorites: function() {
+        this.$store.commit('addFavorite', this.character);
+      },
+      removeFromFavorites: function() {
+        this.$store.commit('removeFavorite', this.character);
+      }
+    }
+  });
+
   Vue.component('my-filter', {
     template: '#my-filter',
     computed: {
