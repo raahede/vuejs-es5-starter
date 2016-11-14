@@ -24,17 +24,7 @@
 
   Vue.component('my-filter', {
     template: '#my-filter',
-    data: function() {
-      return {
-        sortBy: 'name'
-      };
-    },
     computed: {
-      evenNumbers: function () {
-        return this.$store.state.tarantino.filter(function (number) {
-          return number % 2 === 0
-        })
-      },
       tarantino: function () {
         return this.$store.state.tarantino;
       }
