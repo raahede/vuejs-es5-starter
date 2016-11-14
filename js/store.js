@@ -27,7 +27,6 @@ var store = (function(Vuex) {
       state.tarantino = data;
     },
     sortTarantino: function(state, sortBy) {
-      console.log('sort by', sortBy);
       function compare(a,b) {
         if (a[sortBy] < b[sortBy])
           return -1;
