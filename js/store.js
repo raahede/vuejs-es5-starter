@@ -1,5 +1,3 @@
-var Ecom = Ecom || {};
-
 var store = (function(Vuex) {
   'use strict';
 
