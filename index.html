@@ -43,11 +43,11 @@
           <thead>
             <tr>
               <th></th>
-              <th>#</th>
-              <th>Name</th>
-              <th>Movie</th>
-              <th>Year</th>
-              <th>Description</th>
+              <th v-on:click="sortBy('rank')"><span class="btn btn-sm btn-default"># <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
+              <th v-on:click="sortBy('name')"><span class="btn btn-sm btn-default">Name <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
+              <th v-on:click="sortBy('movie')"><span class="btn btn-sm btn-default">Movie <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
+              <th v-on:click="sortBy('year')"><span class="btn btn-sm btn-default">Year <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
+              <th><span class="btn btn-sm btn-default" disabled>Description</th>
             </tr>
           </thead>
           <tbody>
