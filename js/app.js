@@ -5,7 +5,7 @@
     data: function() {
       return {
         active: false
-      }
+      };
     },
     computed: {
       isFavorite: function () {
@@ -24,7 +24,17 @@
 
   Vue.component('my-filter', {
     template: '#my-filter',
+    data: function() {
+      return {
+        sortBy: 'name'
+      };
+    },
     computed: {
+      evenNumbers: function () {
+        return this.$store.state.tarantino.filter(function (number) {
+          return number % 2 === 0
+        })
+      },
       tarantino: function () {
         return this.$store.state.tarantino;
       }
@@ -32,17 +42,12 @@
     created: function() {
       this.$http.get('./data.json').then(function(response){
         this.$store.commit('setTarantino', response.body);
+        this.$store.commit('sortTarantino', 'rank');
       });
     },
     methods: {
-      isFavorite: function (character) {
-        return this.$store.state.favorites.indexOf(character) !== -1;
-      },
-      addToFavorites: function(character) {
-        this.$store.commit('addFavorite', character);
-      },
-      removeFromFavorites: function(character) {
-        this.$store.commit('removeFavorite', character);
+      sortBy: function(prop) {
+        this.$store.commit('sortTarantino', prop);
       }
     }
   });

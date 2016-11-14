@@ -26,6 +26,17 @@ var store = (function(Vuex) {
     setTarantino: function(state, data) {
       state.tarantino = data;
     },
+    sortTarantino: function(state, sortBy) {
+      console.log('sort by', sortBy);
+      function compare(a,b) {
+        if (a[sortBy] < b[sortBy])
+          return -1;
+        if (a[sortBy] > b[sortBy])
+          return 1;
+        return 0;
+      }
+      state.tarantino.sort(compare);
+    },
     addFavorite: function(state, character) {
       state.favorites.push(character);
     },
@@ -50,10 +61,6 @@ var store = (function(Vuex) {
   var getters = {
     evenOrOdd: function(state) {
       return state.count % 2 === 0 ? 'even' : 'odd';
-    },
-    isFavorite: function(state, character) {
-      console.log('is favorite', character);
-      return true;
     }
   };
 
