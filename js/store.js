@@ -7,7 +7,7 @@ var store = (function(Vuex) {
   // each Vuex instance is just a single state tree.
   var state = {
     count: 0,
-    tarantino: {},
+    tarantino: [],
     favorites: []
   };
 
