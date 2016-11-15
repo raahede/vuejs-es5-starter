@@ -70,8 +70,8 @@ var store = (function(Vue, Vuex) {
 
   // getters are functions
   var getters = {
-    evenOrOdd: function(state) {
-      return state.count % 2 === 0 ? 'even' : 'odd';
+    randomTarantino: function(state) {
+      return state.tarantino[Math.floor(Math.random() * state.tarantino.length)];
     }
   };
 

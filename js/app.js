@@ -42,27 +42,24 @@
     }
   });
 
+  Vue.component('my-character', {
+    template: '#my-character',
+    computed: {
+      character: function () {
+        return this.$store.getters.randomTarantino;
+      }
+    }
+  });
+
   new Vue({
     el: '#app',
     store: store,
     computed: {
-      count: function () {
-        return this.$store.state.count;
-      },
-      evenOrOdd: function () {
-        return this.$store.getters.evenOrOdd;
-      },
       favorites: function () {
         return this.$store.state.favorites;
       }
     },
     methods: {
-      increment: function () {
-        this.$store.dispatch('increment');
-      },
-      decrement: function () {
-        this.$store.dispatch('decrement');
-      },
       removeFromFavorites: function(character) {
         this.$store.dispatch('removeFavorite', character);
       }

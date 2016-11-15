@@ -57,6 +57,19 @@
       </div>
     </script>
 
+    <script type="text/x-template" id="my-character">
+      <div class="panel panel-default" v-if="character">
+        <div class="panel-heading">
+          <h3 class="panel-title">Random character</h3>
+        </div>
+        <div class="panel-body">
+          <h4>{{character.name}}</h4>
+          <h5>{{character.movie}} <small>{{character.year}}</small></h5>
+          <p>{{character.description}}</p>
+        </div>
+      </div>
+    </script>
+
     <div class="container">
       <div id="app">
         <div class="navbar navbar-default">
@@ -82,15 +95,7 @@
                 </tr>
               </ol>
             </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">Counter</div>
-              <div class="panel-body">
-                <p>Count: <span v-cloak>{{count}}</span></p>
-                <p>Even/Odd: <span v-cloak>{{evenOrOdd}}</span></p>
-                <button v-on:click="increment" class="btn btn-default">+</button>
-                <button v-on:click="decrement" class="btn btn-default">-</button>
-              </div>
-            </div>
+            <div is="my-character"></div>
           </div>
         </div>
       </div>
