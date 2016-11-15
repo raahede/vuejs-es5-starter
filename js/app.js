@@ -14,10 +14,10 @@
     },
     methods: {
       addToFavorites: function() {
-        this.$store.commit('addFavorite', this.character);
+        this.$store.dispatch('addFavorite', this.character);
       },
       removeFromFavorites: function() {
-        this.$store.commit('removeFavorite', this.character);
+        this.$store.dispatch('removeFavorite', this.character);
       }
     }
   });
@@ -30,14 +30,14 @@
       }
     },
     created: function() {
-      this.$http.get('./data.json').then(function(response){
-        this.$store.commit('setTarantino', response.body);
-        this.$store.commit('sortTarantino', 'rank');
+      var _self = this;
+      this.$store.dispatch('getTarantino').then(function(context) {
+        _self.$store.dispatch('sortTarantino', 'rank');
       });
     },
     methods: {
       sortBy: function(prop) {
-        this.$store.commit('sortTarantino', prop);
+        this.$store.dispatch('sortTarantino', prop);
       }
     }
   });
@@ -58,13 +58,13 @@
     },
     methods: {
       increment: function () {
-        this.$store.commit('increment');
+        this.$store.dispatch('increment');
       },
       decrement: function () {
-        this.$store.commit('decrement');
+        this.$store.dispatch('decrement');
       },
       removeFromFavorites: function(character) {
-        this.$store.commit('removeFavorite', character);
+        this.$store.dispatch('removeFavorite', character);
       }
     }
   });

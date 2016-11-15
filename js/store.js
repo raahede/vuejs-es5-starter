@@ -1,4 +1,4 @@
-var store = (function(Vuex) {
+var store = (function(Vue, Vuex) {
   'use strict';
 
   // root state object.
@@ -51,6 +51,20 @@ var store = (function(Vuex) {
     },
     decrement: function(context) {
       return context.commit('decrement');
+    },
+    sortTarantino: function(context, sortBy) {
+      return context.commit('sortTarantino', sortBy);
+    },
+    addFavorite: function(context, character) {
+      return context.commit('addFavorite', character);
+    },
+    removeFavorite: function(context, character) {
+      return context.commit('removeFavorite', character);
+    },
+    getTarantino: function(context) {
+      return Vue.http.get('./data.json').then(function(response){
+        context.commit('setTarantino', response.body);
+      });
     }
   };
 
@@ -70,4 +84,4 @@ var store = (function(Vuex) {
     mutations: mutations
   });
 
-})(Vuex);
+})(Vue, Vuex);
