@@ -51,9 +51,17 @@
     }
   });
 
-  new Vue({
-    el: '#app',
-    store: store,
+  var characterComponent = {
+    template: '#my-character',
+    computed: {
+      character: function () {
+        return this.$store.getters.randomTarantino;
+      }
+    }
+  };
+
+  var favoritesComponent = {
+    template: '#my-favorites',
     computed: {
       favorites: function () {
         return this.$store.state.favorites;
@@ -64,5 +72,18 @@
         this.$store.dispatch('removeFavorite', character);
       }
     }
+  };
+
+  var router = new VueRouter({
+    routes: [
+      { path: '/character', component: characterComponent },
+      { path: '*', component: favoritesComponent }
+    ]
+  })
+
+  new Vue({
+    el: '#app',
+    store: store,
+    router: router
   });
 })();

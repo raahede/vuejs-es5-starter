@@ -4,7 +4,6 @@ var store = (function(Vue, Vuex) {
   // root state object.
   // each Vuex instance is just a single state tree.
   var state = {
-    count: 0,
     tarantino: [],
     favorites: []
   };
@@ -15,12 +14,6 @@ var store = (function(Vue, Vuex) {
   // mutations must be synchronous and can be recorded by plugins
   // for debugging purposes.
   var mutations = {
-    increment: function(state) {
-      state.count++;
-    },
-    decrement: function(state) {
-      state.count--;
-    },
     setTarantino: function(state, data) {
       state.tarantino = data;
     },
@@ -46,12 +39,6 @@ var store = (function(Vue, Vuex) {
   // actions are functions that causes side effects and can involve
   // asynchronous operations.
   var actions = {
-    increment: function(context) {
-      return context.commit('increment');
-    },
-    decrement: function(context) {
-      return context.commit('decrement');
-    },
     sortTarantino: function(context, sortBy) {
       return context.commit('sortTarantino', sortBy);
     },

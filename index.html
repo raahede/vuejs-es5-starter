@@ -14,6 +14,12 @@
 
     <style type="text/css" media="screen">
       [v-cloak] { display: none; }
+      .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s
+      }
+      .fade-enter, .fade-leave-active {
+        opacity: 0
+      }
     </style>
   </head>
   <body>
@@ -58,16 +64,25 @@
     </script>
 
     <script type="text/x-template" id="my-character">
-      <div class="panel panel-default" v-if="character">
-        <div class="panel-heading">
-          <h3 class="panel-title">Random character</h3>
-        </div>
-        <div class="panel-body">
-          <h4>{{character.name}}</h4>
-          <h5>{{character.movie}} <small>{{character.year}}</small></h5>
-          <p>{{character.description}}</p>
-        </div>
+      <div class="panel-body" v-if="character">
+        <h4>{{character.name}}</h4>
+        <h5>{{character.movie}} <small>{{character.year}}</small></h5>
+        <p>{{character.description}}</p>
       </div>
+    </script>
+
+    <script type="text/x-template" id="my-favorites">
+      <ol class="list-group">
+        <li class="list-group-item" v-for="character in favorites" :key="character.name">
+          <h5>
+            <button v-on:click="removeFromFavorites(character)" class="btn btn-sm btn-default">-</button>
+            {{character.name}} <small>{{character.movie}}</small>
+          </h5>
+        </li>
+        <li class="list-group-item" v-if="!favorites.length">
+          Your favorites list is empty
+        </li>
+      </ol>
     </script>
 
     <div class="container">
@@ -82,20 +97,17 @@
             <div is="my-filter"></div>
           </div>
           <div class="col-md-4">
-            <div class="panel panel-default" v-cloak v-if="favorites.length">
+            <div class="panel panel-default">
               <div class="panel-heading">
-                <h3 class="panel-title">Favorites</h3>
+                <ul class="nav nav-pills">
+                  <li is="router-link" to="/" exact tag="li" active-class="active"><a>Favorites</a></li>
+                  <li is="router-link" to="/character" tag="li" active-class="active"><a>Random Character</a></li>
+                </ul>
               </div>
-              <ol class="list-group">
-                <li class="list-group-item" v-for="character in favorites" :key="character.name">
-                  <h5>
-                    <button v-on:click="removeFromFavorites(character)" class="btn btn-sm btn-default">-</button>
-                    {{character.name}} <small>{{character.movie}}</small>
-                  </h5>
-                </tr>
-              </ol>
+              <transition name="fade" mode="out-in">
+                <router-view></router-view>
+              </transition>
             </div>
-            <div is="my-character"></div>
           </div>
         </div>
       </div>
@@ -103,6 +115,7 @@
 
     <script src="./build/assets/js/vendor/vue.js"></script>
     <script src="./build/assets/js/vendor/vue-resource.js"></script>
+    <script src="./build/assets/js/vendor/vue-router.js"></script>
     <script src="./build/assets/js/vendor/vuex.js"></script>
     <script src="./build/assets/js/app.js"></script>
   </body>
