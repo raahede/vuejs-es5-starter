@@ -35,8 +35,5 @@
     "require-dir": "^0.3.0",
     "run-sequence": "^1.2.2",
     "util": "^0.10.3"
-  },
-  "dependencies": {
-    "bootstrap": "^4.0.0-alpha.4"
   }
 }

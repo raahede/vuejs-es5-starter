@@ -1,9 +1,4 @@
 (function() {
-  var client = contentful.createClient({
-    space: 'wpk17fsuxh8l',
-    accessToken: '272b121abec98bcd8650d604bb626f2e1bb52ce70ba02906db3bab3319886f3f'
-  });
-
   var ContentTypes = {
     name: 'ContentTypes',
     template: '#my-content-types',
@@ -14,8 +9,8 @@
     },
     created: function() {
       var _self = this;
-      client.getContentTypes().then(function (contentTypes) {
-        _self.contentTypes = contentTypes;
+      this.$store.dispatch('getContentTypes').then(function(data) {
+        _self.contentTypes = data;
       });
     }
   };
@@ -51,10 +46,10 @@
     methods: {
       getEntries: function() {
         var _self = this;
-        client.getEntries({
-          'content_type': _self.$route.params.contentType
-        }).then(function (entries) {
-          _self.entries = entries;
+        this.$store.dispatch('getEntries', {
+          content_type: _self.$route.params.contentType
+        }).then(function(data) {
+          _self.entries = data;
         });
       }
     },
@@ -77,11 +72,17 @@
       getEntry: function() {
         var _self = this;
         var entryId = (typeof(this.entryId) !== 'undefined') ? this.entryId : _self.$route.params.entryId;
-        client.getEntry(entryId).then(function (entry) {
-          _self.entry = entry;
-
-          _self.getEntryAssets(entry);
+        this.$store.dispatch('getEntry', {
+          entry_id: entryId
+        }).then(function(data) {
+          _self.entry = data;
+          _self.getEntryAssets(data);
         });
+        // client.getEntry(entryId).then(function (entry) {
+        //   _self.entry = entry;
+
+        //   _self.getEntryAssets(entry);
+        // });
       },
       getEntryAssets: function(entry) {}
     },
@@ -105,9 +106,15 @@
         var _self = this;
         // Reset photo
         this.photo = null;
-        client.getAsset(entry.fields.photo.sys.id).then(function (photo) {
-          _self.photo = photo;
+
+        this.$store.dispatch('getAsset', {
+          asset_id: entry.fields.photo.sys.id
+        }).then(function(data) {
+          _self.photo = data;
         });
+        // client.getAsset(entry.fields.photo.sys.id).then(function (photo) {
+        //   _self.photo = photo;
+        // });
       }
     }
   });
@@ -126,9 +133,16 @@
         var _self = this;
         // Reset profilePhoto
         this.profilePhoto = null;
-        client.getAsset(entry.fields.profilePhoto.sys.id).then(function (profilePhoto) {
-          _self.profilePhoto = profilePhoto;
+
+        this.$store.dispatch('getAsset', {
+          asset_id: entry.fields.profilePhoto.sys.id
+        }).then(function(data) {
+          _self.profilePhoto = data;
         });
+
+        // client.getAsset(entry.fields.profilePhoto.sys.id).then(function (profilePhoto) {
+        //   _self.profilePhoto = profilePhoto;
+        // });
       }
     }
   });
@@ -150,9 +164,16 @@
         var _self = this;
         // Reset coverImage
         this.coverImage = null;
-        client.getAsset(entry.fields.coverImage.sys.id).then(function (coverImage) {
-          _self.coverImage = coverImage;
+
+        this.$store.dispatch('getAsset', {
+          asset_id: entry.fields.coverImage.sys.id
+        }).then(function(data) {
+          _self.coverImage = data;
         });
+
+        // client.getAsset(entry.fields.coverImage.sys.id).then(function (coverImage) {
+        //   _self.coverImage = coverImage;
+        // });
       }
     }
   });
@@ -193,6 +214,7 @@
 
   new Vue({
     el: '#app',
+    store: store,
     components: {
       'my-content-types': ContentTypes
     },

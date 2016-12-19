@@ -14,7 +14,6 @@ var WATCH_PATHS = {
   HTML: ['index.html']
 };
 
-
 // Build tasks
 // ---------------------------------------
 
@@ -23,7 +22,6 @@ gulp.task('build:debug', ['scripts:debug']);
 
 // Dynamic tasks
 // ---------------------------------------
-
 
 // Start BrowerSync
 gulp.task('serve', function(){
@@ -40,7 +38,6 @@ gulp.task('watch', function() {
   gulp.watch(WATCH_PATHS.JAVASCRIPTS, ['scripts:debug', browserSync.reload]);
   gulp.watch(WATCH_PATHS.HTML, ['build:debug', browserSync.reload]);
 });
-
 
 // Default task
 // ---------------------------------------
