@@ -7,8 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
 
-    <!-- External styles -->
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/github.min.css">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -23,66 +21,74 @@
     </style>
   </head>
   <body>
-    <script type="text/x-template" id="my-item">
-      <tr class="item" v-bind:class="{'active': isFavorite}">
-        <td>
-          <button v-if="!isFavorite" v-on:click="addToFavorites" class="btn btn-sm btn-success">+</button>
-          <button v-if="isFavorite" v-on:click="removeFromFavorites" class="btn btn-sm btn-default">-</button>
-        </td>
-        <td>{{character.rank}}</td>
-        <td>{{character.name}}</td>
-        <td>{{character.movie}}</td>
-        <td>{{character.year}}</td>
-        <td>
-          <button class="btn btn-default btn-xs" v-on:click="active = !active">
-            <span v-if="active" >-</span>
-            <span v-if="!active" >...</span>
-          </button>
-          <span v-if="active">{{character.description}}</span>
-        </td>
-      </tr>
-    </script>
-
-    <script type="text/x-template" id="my-filter">
-      <div class="filter">
-        <table class="table">
-          <thead>
-            <tr>
-              <th></th>
-              <th v-on:click="sortBy('rank')"><span class="btn btn-sm btn-default"># <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
-              <th v-on:click="sortBy('name')"><span class="btn btn-sm btn-default">Name <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
-              <th v-on:click="sortBy('movie')"><span class="btn btn-sm btn-default">Movie <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
-              <th v-on:click="sortBy('year')"><span class="btn btn-sm btn-default">Year <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
-              <th><span class="btn btn-sm btn-default" disabled>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="character in tarantino" :key="character.rank" is="my-item" v-bind:character="character"></tr>
-          </tbody>
-        </table>
+    <script type="text/x-template" id="my-content-types">
+      <div class="contentful row">
+        <div class="col-md-3">
+          <ul v-if="contentTypes" class="nav nav-pills nav-stacked">
+            <li v-for="contentType in contentTypes.items" is="router-link" v-bind:to="{ name: 'entries', params: { contentType: contentType.sys.id }}" tag="li" active-class="active"><a>{{contentType.name}}</a></li>
+          </ul>
+        </div>
+        <router-view></router-view>
       </div>
     </script>
 
-    <script type="text/x-template" id="my-character">
-      <div class="panel-body" v-if="character">
-        <h4>{{character.name}}</h4>
-        <h5>{{character.movie}} <small>{{character.year}}</small></h5>
-        <p>{{character.description}}</p>
+    <script type="text/x-template" id="my-entries">
+      <div class="entries col-md-9">
+        <div class="row">
+          <div class="col-md-4">
+            <ul v-if="entries" class="nav nav-pills nav-stacked">
+              <li v-for="entry in entries.items" is="router-link" v-bind:to="{ name: contentTypeName, params: { contentType: $route.params.contentType, entryId: entry.sys.id }}" exact tag="li" active-class="active">
+                <a v-if="entry.fields.title">{{entry.fields.title}}</a>
+                <a v-if="entry.fields.name">{{entry.fields.name}}</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-8">
+            <router-view></router-view>
+          </div>
+        </div>
       </div>
     </script>
 
-    <script type="text/x-template" id="my-favorites">
-      <ol class="list-group">
-        <li class="list-group-item" v-for="character in favorites" :key="character.name">
-          <h5>
-            <button v-on:click="removeFromFavorites(character)" class="btn btn-sm btn-default">-</button>
-            {{character.name}} <small>{{character.movie}}</small>
-          </h5>
-        </li>
-        <li class="list-group-item" v-if="!favorites.length">
-          Your favorites list is empty
-        </li>
-      </ol>
+    <script type="text/x-template" id="my-image">
+      <div class="image" v-if="entry">
+        <div class="thumbnail">
+          <img v-if="photo" v-bind:src="photo.fields.file.url" v-bind:alt="photo.fields.title">
+          <div class="caption">
+            <h3>{{entry.fields.title}}</h3>
+            <p>{{entry.fields.imageCaption}}</p>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/x-template" id="my-author">
+      <div class="author" v-if="entry">
+        <div class="thumbnail">
+          <img v-if="profilePhoto" v-bind:src="profilePhoto.fields.file.url" v-bind:alt="profilePhoto.fields.title">
+          <div class="caption">
+            <h3>{{entry.fields.name}}</h3>
+            <p>{{entry.fields.biography}}</p>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/x-template" id="my-gallery">
+      <div class="gallery" v-if="entry">
+        <div class="thumbnail">
+          <img v-if="coverImage" v-bind:src="coverImage.fields.file.url" v-bind:alt="coverImage.fields.title">
+          <div class="caption">
+            <h3>{{entry.fields.title}}</h3>
+            <p>{{entry.fields.description}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6" v-for="image in entry.fields.images">
+            <my-image v-bind:entry-id="image.sys.id"></my-image>
+          </div>
+        </div>
+      </div>
     </script>
 
     <div class="container">
@@ -92,27 +98,11 @@
             <a class="navbar-brand" href="https://github.com/raahede/vuejs-es5-starter">VueJS ES5 Starter</a>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-8">
-            <div is="my-filter"></div>
-          </div>
-          <div class="col-md-4">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <ul class="nav nav-pills">
-                  <li is="router-link" to="/" exact tag="li" active-class="active"><a>Favorites</a></li>
-                  <li is="router-link" to="/character" tag="li" active-class="active"><a>Random Character</a></li>
-                </ul>
-              </div>
-              <transition name="fade" mode="out-in">
-                <router-view></router-view>
-              </transition>
-            </div>
-          </div>
-        </div>
+        <router-view></router-view>
       </div>
     </div>
 
+    <script src="https://unpkg.com/contentful@latest/browser-dist/contentful.min.js"></script>
     <script src="./build/assets/js/vendor/vue.js"></script>
     <script src="./build/assets/js/vendor/vue-resource.js"></script>
     <script src="./build/assets/js/vendor/vue-router.js"></script>

@@ -9,7 +9,7 @@ var VENDOR_PATHS = [
 ];
 
 var PATHS = [
-  'js/store.js',
+  // 'js/store.js',
   'js/app.js'
 ];
 
