@@ -22,37 +22,27 @@
   </head>
   <body>
     <script type="text/x-template" id="my-content-types">
-      <div class="contentful row">
-        <div class="col-md-3">
-          <ul v-if="contentTypes" class="nav nav-pills nav-stacked">
-            <li v-for="contentType in contentTypes.items" is="router-link" v-bind:to="{ name: 'entries', params: { contentType: contentType.sys.id }}" tag="li" active-class="active"><a>{{contentType.name}}</a></li>
-          </ul>
-        </div>
-        <router-view></router-view>
+      <div class="contentful" style="position: absolute; width: 100%;">
+        <ul v-if="contentTypes" class="nav nav-pills nav-stacked">
+          <li v-for="contentType in contentTypes.items" is="router-link" v-bind:to="{ name: 'entries', params: { contentType: contentType.sys.id }}" tag="li" active-class="active"><a>{{contentType.name}}</a></li>
+        </ul>
       </div>
     </script>
 
     <script type="text/x-template" id="my-entries">
-      <div class="entries col-md-9">
-        <div class="row">
-          <div class="col-md-4">
-            <ul v-if="entries" class="nav nav-pills nav-stacked">
-              <li v-for="entry in entries.items" is="router-link" v-bind:to="{ name: contentTypeName, params: { contentType: $route.params.contentType, entryId: entry.sys.id }}" exact tag="li" active-class="active">
-                <a v-if="entry.fields.title">{{entry.fields.title}}</a>
-                <a v-if="entry.fields.name">{{entry.fields.name}}</a>
-              </li>
-            </ul>
-          </div>
-          <div class="col-md-8">
-            <router-view></router-view>
-          </div>
-        </div>
+      <div class="entries" style="position: absolute; width: 100%;">
+        <ul v-if="entries" class="nav nav-pills nav-stacked">
+          <li v-for="entry in entries.items" is="router-link" v-bind:to="{ name: contentTypeName, params: { contentType: $route.params.contentType, entryId: entry.sys.id }}" exact tag="li" active-class="active">
+            <a v-if="entry.fields.title">{{entry.fields.title}}</a>
+            <a v-if="entry.fields.name">{{entry.fields.name}}</a>
+          </li>
+        </ul>
       </div>
     </script>
 
     <script type="text/x-template" id="my-image">
-      <div class="image" v-if="entry">
-        <div class="thumbnail">
+      <div class="image" style="position: absolute; width: 100%;">
+        <div class="thumbnail" v-if="entry">
           <img v-if="photo" v-bind:src="photo.fields.file.url" v-bind:alt="photo.fields.title">
           <div class="caption">
             <h3>{{entry.fields.title}}</h3>
@@ -63,8 +53,8 @@
     </script>
 
     <script type="text/x-template" id="my-author">
-      <div class="author" v-if="entry">
-        <div class="thumbnail">
+      <div class="author" style="position: absolute; width: 100%;">
+        <div class="thumbnail" v-if="entry">
           <img v-if="profilePhoto" v-bind:src="profilePhoto.fields.file.url" v-bind:alt="profilePhoto.fields.title">
           <div class="caption">
             <h3>{{entry.fields.name}}</h3>
@@ -75,8 +65,8 @@
     </script>
 
     <script type="text/x-template" id="my-gallery">
-      <div class="gallery" v-if="entry">
-        <div class="thumbnail">
+      <div class="gallery" style="position: absolute; width: 100%;">
+        <div class="thumbnail" v-if="entry">
           <img v-if="coverImage" v-bind:src="coverImage.fields.file.url" v-bind:alt="coverImage.fields.title">
           <div class="caption">
             <h3>{{entry.fields.title}}</h3>
@@ -98,11 +88,23 @@
             <a class="navbar-brand" href="https://github.com/raahede/vuejs-es5-starter">VueJS ES5 Starter</a>
           </div>
         </div>
-        <router-view></router-view>
+        <div class="row">
+          <div class="col-md-6" style="position: relative; overflow-x: hidden; height: 100vh; overflow-y: auto;">
+            <transition
+                v-on:before-enter="beforeEnter"
+                v-on:enter="enter"
+                v-on:leave="leave"
+                v-bind:css="false"
+              >
+              <router-view></router-view>
+            </transition>
+          </div>
+        </div>
       </div>
     </div>
 
     <script src="https://unpkg.com/contentful@latest/browser-dist/contentful.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
     <script src="./build/assets/js/vendor/vue.js"></script>
     <script src="./build/assets/js/vendor/vue-resource.js"></script>
     <script src="./build/assets/js/vendor/vue-router.js"></script>
