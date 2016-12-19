@@ -24,9 +24,9 @@
     <script type="text/x-template" id="my-content-types">
       <div class="contentful row">
         <div class="col-md-3">
-          <ul v-if="contentTypes" class="nav nav-pills nav-stacked">
-            <li v-for="contentType in contentTypes.items" is="router-link" v-bind:to="{ name: 'entries', params: { contentType: contentType.sys.id }}" tag="li" active-class="active"><a>{{contentType.name}}</a></li>
-          </ul>
+          <div v-if="contentTypes" class="list-group">
+            <a v-for="contentType in contentTypes.items" is="router-link" v-bind:to="{ name: 'entries', params: { contentType: contentType.sys.id }}" tag="a" class="list-group-item" active-class="active">{{contentType.name}}</a>
+          </div>
         </div>
         <router-view></router-view>
       </div>
@@ -36,12 +36,12 @@
       <div class="entries col-md-9">
         <div class="row">
           <div class="col-md-4">
-            <ul v-if="entries" class="nav nav-pills nav-stacked">
-              <li v-for="entry in entries.items" is="router-link" v-bind:to="{ name: contentTypeName, params: { contentType: $route.params.contentType, entryId: entry.sys.id }}" exact tag="li" active-class="active">
-                <a v-if="entry.fields.title">{{entry.fields.title}}</a>
-                <a v-if="entry.fields.name">{{entry.fields.name}}</a>
-              </li>
-            </ul>
+            <div v-if="entries" class="list-group">
+              <a v-for="entry in entries.items" is="router-link" v-bind:to="{ name: contentTypeName, params: { contentType: $route.params.contentType, entryId: entry.sys.id }}" exact tag="a" class="list-group-item" active-class="active">
+                <span v-if="entry.fields.title">{{entry.fields.title}}</span>
+                <span v-if="entry.fields.name">{{entry.fields.name}}</span>
+              </a>
+            </div>
           </div>
           <div class="col-md-8">
             <router-view></router-view>
@@ -53,7 +53,9 @@
     <script type="text/x-template" id="my-image">
       <div class="image" v-if="entry">
         <div class="thumbnail">
-          <img v-if="photo" v-bind:src="photo.fields.file.url" v-bind:alt="photo.fields.title">
+          <div class="embed-responsive embed-responsive-4by3">
+            <img class="embed-responsive-item" v-if="photo" v-bind:src="photo.fields.file.url" v-bind:alt="photo.fields.title">
+          </div>
           <div class="caption">
             <h3>{{entry.fields.title}}</h3>
             <p>{{entry.fields.imageCaption}}</p>
@@ -77,14 +79,16 @@
     <script type="text/x-template" id="my-gallery">
       <div class="gallery" v-if="entry">
         <div class="thumbnail">
-          <img v-if="coverImage" v-bind:src="coverImage.fields.file.url" v-bind:alt="coverImage.fields.title">
+          <div class="embed-responsive embed-responsive-4by3">
+            <img class="embed-responsive-item" v-if="coverImage" v-bind:src="coverImage.fields.file.url" v-bind:alt="coverImage.fields.title">
+          </div>
           <div class="caption">
             <h3>{{entry.fields.title}}</h3>
             <p>{{entry.fields.description}}</p>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-6" v-for="image in entry.fields.images">
+          <div class="col-md-6" v-for="image in entry.fields.images" is="router-link" v-bind:to="{ name: 'image', params: { contentType: '1xYw5JsIecuGE68mmGMg20', entryId: image.sys.id }}" exact tag="a">
             <my-image v-bind:entry-id="image.sys.id"></my-image>
           </div>
         </div>
@@ -93,11 +97,16 @@
 
     <div class="container">
       <div id="app">
-        <div class="navbar navbar-default">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="https://github.com/raahede/vuejs-es5-starter">VueJS ES5 Starter</a>
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="https://github.com/raahede/vuejs-es5-starter">VueJS ES5 Starter</a>
+            </div>
+            <div class="collapse navbar-collapse">
+              <p class="navbar-text navbar-right"><a href="https://github.com/raahede" class="navbar-link">@Raahede</a></p>
+            </div>
           </div>
-        </div>
+        </nav>
         <router-view></router-view>
       </div>
     </div>
